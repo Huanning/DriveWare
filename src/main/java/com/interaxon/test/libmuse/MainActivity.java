@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -45,6 +46,11 @@ import com.interaxon.libmuse.MuseManager;
 import com.interaxon.libmuse.MusePreset;
 import com.interaxon.libmuse.MuseVersion;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 /**
  * In this simple example MainActivity implements 2 MuseHeadband listeners
  * and updates UI when data from Muse is received. Similarly you can implement
@@ -73,6 +79,13 @@ public class MainActivity extends Activity implements OnClickListener {
     /**
      * Connection listener updates UI with new connection status and logs it.
      */
+    private LineGraphSeries<DataPoint> alphaSeries;
+    private LineGraphSeries<DataPoint> betaSeries;
+    private LineGraphSeries<DataPoint> thetaSeries;
+    private LineGraphSeries<DataPoint> aSeries;
+    private LineGraphSeries<DataPoint> bSeries;
+    private LineGraphSeries<DataPoint> tSeries;
+    private int lastX = 0;
 
     class ConnectionListener extends MuseConnectionListener {
 
@@ -147,7 +160,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 case ACCELEROMETER:
                     updateAccelerometer(p.getValues());
                     break;
-                /*
                 case ALPHA_RELATIVE:
                     updateAlphaRelative(p.getValues());
                     break;
@@ -157,7 +169,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 case THETA_RELATIVE:
                     updateThetaRelative(p.getValues());
                     break;
-                */
                 case ALPHA_ABSOLUTE:
                     updateAlphaAbsolute(p.getValues());
                     break;
@@ -229,7 +240,6 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         }
 
-        /*
         private void updateAlphaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
@@ -248,6 +258,27 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
                         a4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        int count = 0;
+                        double avg = 0.0d;
+                        if (data.get(Eeg.TP9.ordinal()) != null) {
+                            avg += data.get(Eeg.TP9.ordinal());
+                            count++;
+                        }
+                        if (data.get(Eeg.TP9.ordinal()) != null) {
+                            avg += data.get(Eeg.FP1.ordinal());
+                            count++;
+                        }
+                        if (data.get(Eeg.TP9.ordinal()) != null) {
+                            avg += data.get(Eeg.FP2.ordinal());
+                            count++;
+                        }
+                        if (data.get(Eeg.TP9.ordinal()) != null) {
+                            avg += data.get(Eeg.TP10.ordinal());
+                            count++;
+                        }
+                        if (count != 0) {
+                            aSeries.appendData(new DataPoint(lastX++, avg), true, 10);
+                        }
                     }
                 });
             }
@@ -271,6 +302,7 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
                         b4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        bSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
                     }
                 });
             }
@@ -294,11 +326,11 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
                         t4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        tSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
                     }
                 });
             }
         }
-        */
 
         private void updateAlphaAbsolute(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
@@ -318,6 +350,7 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
                         alpha4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        alphaSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
                     }
                 });
             }
@@ -341,6 +374,7 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
                         beta4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        betaSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
                     }
                 });
             }
@@ -364,6 +398,7 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
                         theta4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        thetaSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
                     }
                 });
             }
@@ -401,6 +436,59 @@ public class MainActivity extends Activity implements OnClickListener {
         disconnectButton.setOnClickListener(this);
         Button pauseButton = (Button) findViewById(R.id.pause);
         pauseButton.setOnClickListener(this);
+
+        GraphView aGraph = (GraphView) findViewById(R.id.graph_alpha_relative);
+        GraphView bGraph = (GraphView) findViewById(R.id.graph_beta_relative);
+        GraphView tGraph = (GraphView) findViewById(R.id.graph_theta_relative);
+        GraphView alphaGraph = (GraphView) findViewById(R.id.graph_alpha_absolute);
+        GraphView betaGraph = (GraphView) findViewById(R.id.graph_beta_absolute);
+        GraphView thetaGraph = (GraphView) findViewById(R.id.graph_theta_absolute);
+        // data
+        aSeries = new LineGraphSeries<DataPoint>();
+        bSeries = new LineGraphSeries<DataPoint>();
+        tSeries = new LineGraphSeries<DataPoint>();
+        alphaSeries = new LineGraphSeries<DataPoint>();
+        betaSeries = new LineGraphSeries<DataPoint>();
+        thetaSeries = new LineGraphSeries<DataPoint>();
+        aGraph.addSeries(alphaSeries);
+        bGraph.addSeries(betaSeries);
+        tGraph.addSeries(thetaSeries);
+        alphaGraph.addSeries(alphaSeries);
+        betaGraph.addSeries(betaSeries);
+        thetaGraph.addSeries(thetaSeries);
+
+        // customize a little bit viewport
+        Viewport aViewport = aGraph.getViewport();
+        aViewport.setYAxisBoundsManual(true);
+        aViewport.setMinY(-1);
+        aViewport.setMaxY(1);
+        aViewport.setScrollable(true);
+        Viewport bViewport = bGraph.getViewport();
+        bViewport.setYAxisBoundsManual(true);
+        bViewport.setMinY(-1);
+        bViewport.setMaxY(1);
+        bViewport.setScrollable(true);
+        Viewport tViewport = tGraph.getViewport();
+        tViewport.setYAxisBoundsManual(true);
+        tViewport.setMinY(-1);
+        tViewport.setMaxY(1);
+        tViewport.setScrollable(true);
+        Viewport alphaViewport = alphaGraph.getViewport();
+        alphaViewport.setYAxisBoundsManual(true);
+        alphaViewport.setMinY(-1);
+        alphaViewport.setMaxY(1);
+        alphaViewport.setScrollable(true);
+        Viewport betaViewport = betaGraph.getViewport();
+        betaViewport.setYAxisBoundsManual(true);
+        betaViewport.setMinY(-1);
+        betaViewport.setMaxY(1);
+        betaViewport.setScrollable(true);
+        Viewport thetaViewport = thetaGraph.getViewport();
+        thetaViewport.setYAxisBoundsManual(true);
+        thetaViewport.setMinY(-1);
+        thetaViewport.setMaxY(1);
+        thetaViewport.setScrollable(true);
+
 
         // // Uncommet to test Muse File Reader
         //

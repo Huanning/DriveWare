@@ -1,3 +1,8 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
@@ -114,13 +119,16 @@
 			android:text="@string/init_val" />
 	</LinearLayout>
 
-    <!--
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_weight="1"
 		android:textSize="16sp"
 		android:text="@string/alpha_relative" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph_alpha_relative"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -162,6 +170,10 @@
         android:layout_weight="1"
         android:textSize="16sp"
         android:text="@string/beta_relative" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph_beta_relative"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -203,6 +215,10 @@
         android:layout_weight="1"
         android:textSize="16sp"
         android:text="@string/theta_relative" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph_theta_relative"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -237,7 +253,6 @@
             android:textSize="16sp"
             android:text="@string/init_val" />
     </LinearLayout>
-    -->
 
     <TextView
         android:layout_width="match_parent"
@@ -245,6 +260,10 @@
         android:layout_weight="1"
         android:textSize="16sp"
         android:text="@string/alpha_absolute" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph_alpha_absolute"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -286,6 +305,10 @@
         android:layout_weight="1"
         android:textSize="16sp"
         android:text="@string/beta_absolute" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph_beta_absolute"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -327,6 +350,10 @@
         android:layout_weight="1"
         android:textSize="16sp"
         android:text="@string/theta_absolute" />
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph_theta_absolute"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -385,4 +412,8 @@
 			android:layout_height="40dp"
 			android:text="@string/pause" />
 	</LinearLayout>
+
+
 </LinearLayout>
+
+</ScrollView>
