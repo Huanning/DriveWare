@@ -6,11 +6,9 @@
 package com.interaxon.test.libmuse;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
@@ -77,19 +75,22 @@ import com.jjoe64.graphview.series.LineGraphSeries;
  * on the screen.
  */
 public class MainActivity extends Activity implements OnClickListener {
-    /**
-     * Connection listener updates UI with new connection status and logs it.
-     */
+    /*
     private LineGraphSeries<DataPoint> alphaSeries;
     private LineGraphSeries<DataPoint> betaSeries;
     private LineGraphSeries<DataPoint> thetaSeries;
+    */
     private LineGraphSeries<DataPoint> aSeries;
     private LineGraphSeries<DataPoint> bSeries;
     private LineGraphSeries<DataPoint> tSeries;
+    private LineGraphSeries<DataPoint> dSeries;
     private int lastX = 0;
 
     private MediaPlayer mp = null;
 
+    /**
+     * Connection listener updates UI with new connection status and logs it.
+     */
     class ConnectionListener extends MuseConnectionListener {
 
         final WeakReference<Activity> activityRef;
@@ -157,12 +158,6 @@ public class MainActivity extends Activity implements OnClickListener {
         @Override
         public void receiveMuseDataPacket(MuseDataPacket p) {
             switch (p.getPacketType()) {
-                case EEG:
-                    updateEeg(p.getValues());
-                    break;
-                case ACCELEROMETER:
-                    updateAccelerometer(p.getValues());
-                    break;
                 case ALPHA_RELATIVE:
                     updateAlphaRelative(p.getValues());
                     break;
@@ -172,6 +167,10 @@ public class MainActivity extends Activity implements OnClickListener {
                 case THETA_RELATIVE:
                     updateThetaRelative(p.getValues());
                     break;
+                case DELTA_RELATIVE:
+                    updateDeltaRelative(p.getValues());
+                    break;
+                /*
                 case ALPHA_ABSOLUTE:
                     updateAlphaAbsolute(p.getValues());
                     break;
@@ -181,6 +180,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 case THETA_ABSOLUTE:
                     updateThetaAbsolute(p.getValues());
                     break;
+                */
                 case BATTERY:
                     fileWriter.addDataPacket(1, p);
                     // It's library client responsibility to flush the buffer,
@@ -200,49 +200,6 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         }
 
-        private void updateAccelerometer(final ArrayList<Double> data) {
-            Activity activity = activityRef.get();
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView acc_x = (TextView) findViewById(R.id.acc_x);
-                        TextView acc_y = (TextView) findViewById(R.id.acc_y);
-                        TextView acc_z = (TextView) findViewById(R.id.acc_z);
-                        acc_x.setText(String.format(
-                                "%6.2f", data.get(Accelerometer.FORWARD_BACKWARD.ordinal())));
-                        acc_y.setText(String.format(
-                                "%6.2f", data.get(Accelerometer.UP_DOWN.ordinal())));
-                        acc_z.setText(String.format(
-                                "%6.2f", data.get(Accelerometer.LEFT_RIGHT.ordinal())));
-                    }
-                });
-            }
-        }
-
-        private void updateEeg(final ArrayList<Double> data) {
-            Activity activity = activityRef.get();
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        TextView tp9 = (TextView) findViewById(R.id.eeg_tp9);
-                        TextView fp1 = (TextView) findViewById(R.id.eeg_fp1);
-                        TextView fp2 = (TextView) findViewById(R.id.eeg_fp2);
-                        TextView tp10 = (TextView) findViewById(R.id.eeg_tp10);
-                        tp9.setText(String.format(
-                                "%6.2f", data.get(Eeg.TP9.ordinal())));
-                        fp1.setText(String.format(
-                                "%6.2f", data.get(Eeg.FP1.ordinal())));
-                        fp2.setText(String.format(
-                                "%6.2f", data.get(Eeg.FP2.ordinal())));
-                        tp10.setText(String.format(
-                                "%6.2f", data.get(Eeg.TP10.ordinal())));
-                    }
-                });
-            }
-        }
-
         private void updateAlphaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
@@ -250,42 +207,39 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView a1 = (TextView) findViewById(R.id.a1);
-                        TextView a2 = (TextView) findViewById(R.id.a2);
-                        TextView a3 = (TextView) findViewById(R.id.a3);
+                        //TextView a2 = (TextView) findViewById(R.id.a2);
+                        //TextView a3 = (TextView) findViewById(R.id.a3);
                         TextView a4 = (TextView) findViewById(R.id.a4);
                         TextView a5 = (TextView) findViewById(R.id.a5);
                         a1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
+                        /*
                         a2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         a3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
+                        */
                         a4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
+                        double sum = 0.0d;
                         double avg = 0.0d;
                         if (!Double.isNaN(data.get(Eeg.TP9.ordinal()))) {
                             count++;
-                            avg += data.get(Eeg.TP9.ordinal()) / count;
-                        }
-                        if (!Double.isNaN(data.get(Eeg.FP1.ordinal()))) {
-                            count++;
-                            avg += data.get(Eeg.FP1.ordinal()) / count;
-                        }
-                        if (!Double.isNaN(data.get(Eeg.FP2.ordinal()))) {
-                            count++;
-                            avg += data.get(Eeg.FP2.ordinal()) / count;
+                            sum += data.get(Eeg.TP9.ordinal());
                         }
                         if (!Double.isNaN(data.get(Eeg.TP10.ordinal()))) {
                             count++;
-                            avg += data.get(Eeg.TP10.ordinal()) / count;
+                            sum += data.get(Eeg.TP10.ordinal());
                         }
-                        if (count != 0) {
-                            if (avg > 0.2) {
+                        if (count > 0) {
+                            avg = sum / count;
+                            if (avg > 0.5) {
                                 alarm();
                             }
                             aSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
+                        a5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
@@ -303,18 +257,39 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView b1 = (TextView) findViewById(R.id.b1);
-                        TextView b2 = (TextView) findViewById(R.id.b2);
-                        TextView b3 = (TextView) findViewById(R.id.b3);
+                        //TextView b2 = (TextView) findViewById(R.id.b2);
+                        //TextView b3 = (TextView) findViewById(R.id.b3);
                         TextView b4 = (TextView) findViewById(R.id.b4);
+                        TextView b5 = (TextView) findViewById(R.id.b5);
                         b1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
+                        /*
                         b2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         b3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
+                        */
                         b4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
-                        bSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
+                        int count = 0;
+                        double sum = 0.0d;
+                        double avg = 0.0d;
+                        if (!Double.isNaN(data.get(Eeg.TP9.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP9.ordinal());
+                        }
+                        if (!Double.isNaN(data.get(Eeg.TP10.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP10.ordinal());
+                        }
+                        if (count > 0) {
+                            avg = sum / count;
+                            if (avg > 0.5) {
+                                alarm();
+                            }
+                            bSeries.appendData(new DataPoint(lastX++, avg), true, 10);
+                        }
+                        b5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
@@ -327,23 +302,90 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView t1 = (TextView) findViewById(R.id.t1);
-                        TextView t2 = (TextView) findViewById(R.id.t2);
-                        TextView t3 = (TextView) findViewById(R.id.t3);
+                        //TextView t2 = (TextView) findViewById(R.id.t2);
+                        //TextView t3 = (TextView) findViewById(R.id.t3);
                         TextView t4 = (TextView) findViewById(R.id.t4);
+                        TextView t5 = (TextView) findViewById(R.id.t5);
                         t1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
+                        /*
                         t2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         t3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
+                        */
                         t4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
-                        tSeries.appendData(new DataPoint(lastX++, data.get(Eeg.TP9.ordinal())), true, 10);
+                        int count = 0;
+                        double sum = 0.0d;
+                        double avg = 0.0d;
+                        if (!Double.isNaN(data.get(Eeg.TP9.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP9.ordinal());
+                        }
+                        if (!Double.isNaN(data.get(Eeg.TP10.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP10.ordinal());
+                        }
+                        if (count > 0) {
+                            avg = sum / count;
+                            if (avg > 0.5) {
+                                alarm();
+                            }
+                            tSeries.appendData(new DataPoint(lastX++, avg), true, 10);
+                        }
+                        t5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
         }
 
+        private void updateDeltaRelative(final ArrayList<Double> data) {
+            Activity activity = activityRef.get();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView d1 = (TextView) findViewById(R.id.d1);
+                        //TextView d2 = (TextView) findViewById(R.id.d2);
+                        //TextView d3 = (TextView) findViewById(R.id.d3);
+                        TextView d4 = (TextView) findViewById(R.id.d4);
+                        TextView d5 = (TextView) findViewById(R.id.d5);
+                        d1.setText(String.format(
+                                "%6.2f", data.get(Eeg.TP9.ordinal())));
+                        /*
+                        d2.setText(String.format(
+                                "%6.2f", data.get(Eeg.FP1.ordinal())));
+                        d3.setText(String.format(
+                                "%6.2f", data.get(Eeg.FP2.ordinal())));
+                        */
+                        d4.setText(String.format(
+                                "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        int count = 0;
+                        double sum = 0.0d;
+                        double avg = 0.0d;
+                        if (!Double.isNaN(data.get(Eeg.TP9.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP9.ordinal());
+                        }
+                        if (!Double.isNaN(data.get(Eeg.TP10.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP10.ordinal());
+                        }
+                        if (count > 0) {
+                            avg = sum / count;
+                            if (avg > 0.5) {
+                                alarm();
+                            }
+                            dSeries.appendData(new DataPoint(lastX++, avg), true, 10);
+                        }
+                        d5.setText(String.format("%6.2f", avg));
+                    }
+                });
+            }
+        }
+
+        /*
         private void updateAlphaAbsolute(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
@@ -415,6 +457,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 });
             }
         }
+        */
 
         public void setFileWriter(MuseFileWriter fileWriter) {
             this.fileWriter  = fileWriter;
@@ -452,24 +495,29 @@ public class MainActivity extends Activity implements OnClickListener {
         GraphView aGraph = (GraphView) findViewById(R.id.graph_alpha_relative);
         GraphView bGraph = (GraphView) findViewById(R.id.graph_beta_relative);
         GraphView tGraph = (GraphView) findViewById(R.id.graph_theta_relative);
-        GraphView alphaGraph = (GraphView) findViewById(R.id.graph_alpha_absolute);
-        GraphView betaGraph = (GraphView) findViewById(R.id.graph_beta_absolute);
-        GraphView thetaGraph = (GraphView) findViewById(R.id.graph_theta_absolute);
-        // data
+        GraphView dGraph = (GraphView) findViewById(R.id.graph_delta_relative);
         aSeries = new LineGraphSeries<DataPoint>();
         bSeries = new LineGraphSeries<DataPoint>();
         tSeries = new LineGraphSeries<DataPoint>();
+        dSeries = new LineGraphSeries<DataPoint>();
+        aGraph.addSeries(aSeries);
+        bGraph.addSeries(bSeries);
+        tGraph.addSeries(tSeries);
+        dGraph.addSeries(dSeries);
+
+        /*
+        GraphView alphaGraph = (GraphView) findViewById(R.id.graph_alpha_absolute);
+        GraphView betaGraph = (GraphView) findViewById(R.id.graph_beta_absolute);
+        GraphView thetaGraph = (GraphView) findViewById(R.id.graph_theta_absolute);
         alphaSeries = new LineGraphSeries<DataPoint>();
         betaSeries = new LineGraphSeries<DataPoint>();
         thetaSeries = new LineGraphSeries<DataPoint>();
-        aGraph.addSeries(alphaSeries);
-        bGraph.addSeries(betaSeries);
-        tGraph.addSeries(thetaSeries);
         alphaGraph.addSeries(alphaSeries);
         betaGraph.addSeries(betaSeries);
         thetaGraph.addSeries(thetaSeries);
+        */
 
-        // customize a little bit viewport
+        // customize graph
         Viewport aViewport = aGraph.getViewport();
         aViewport.setYAxisBoundsManual(true);
         aViewport.setMinY(-1);
@@ -485,6 +533,13 @@ public class MainActivity extends Activity implements OnClickListener {
         tViewport.setMinY(-1);
         tViewport.setMaxY(1);
         tViewport.setScrollable(true);
+        Viewport dViewport = dGraph.getViewport();
+        dViewport.setYAxisBoundsManual(true);
+        dViewport.setMinY(-1);
+        dViewport.setMaxY(1);
+        dViewport.setScrollable(true);
+
+        /*
         Viewport alphaViewport = alphaGraph.getViewport();
         alphaViewport.setYAxisBoundsManual(true);
         alphaViewport.setMinY(-1);
@@ -500,7 +555,7 @@ public class MainActivity extends Activity implements OnClickListener {
         thetaViewport.setMinY(-1);
         thetaViewport.setMaxY(1);
         thetaViewport.setScrollable(true);
-
+        */
 
         // // Uncommet to test Muse File Reader
         //
@@ -637,26 +692,17 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private void configureLibrary() {
         muse.registerConnectionListener(connectionListener);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.ACCELEROMETER);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.EEG);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.ALPHA_RELATIVE);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.BETA_RELATIVE);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.THETA_RELATIVE);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.ALPHA_ABSOLUTE);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.BETA_ABSOLUTE);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.THETA_ABSOLUTE);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.ARTIFACTS);
-        muse.registerDataListener(dataListener,
-                MuseDataPacketType.BATTERY);
+        muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_RELATIVE);
+        muse.registerDataListener(dataListener, MuseDataPacketType.BETA_RELATIVE);
+        muse.registerDataListener(dataListener, MuseDataPacketType.THETA_RELATIVE);
+        muse.registerDataListener(dataListener, MuseDataPacketType.DELTA_RELATIVE);
+        /*
+        muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_ABSOLUTE);
+        muse.registerDataListener(dataListener, MuseDataPacketType.BETA_ABSOLUTE);
+        muse.registerDataListener(dataListener, MuseDataPacketType.THETA_ABSOLUTE);
+        */
+        muse.registerDataListener(dataListener, MuseDataPacketType.ARTIFACTS);
+        muse.registerDataListener(dataListener, MuseDataPacketType.BATTERY);
         muse.setPreset(MusePreset.PRESET_14);
         muse.enableDataTransmission(dataTransmission);
     }
