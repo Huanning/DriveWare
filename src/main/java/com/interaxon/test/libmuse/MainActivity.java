@@ -150,6 +150,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
         final WeakReference<Activity> activityRef;
         private MuseFileWriter fileWriter;
+        private double alpha = 0, old_alpha = 0, beta = 0, old_beta = 0, theta = 0, old_theta = 0;
+        private int alpha_c = 0, beta_c = 0, theta_c = 0;
+        boolean awake;
 
         DataListener(final WeakReference<Activity> activityRef) {
             this.activityRef = activityRef;
@@ -157,19 +160,23 @@ public class MainActivity extends Activity implements OnClickListener {
 
         @Override
         public void receiveMuseDataPacket(MuseDataPacket p) {
+            old_alpha = alpha;
+            old_beta = beta;
+            old_theta = theta;
             switch (p.getPacketType()) {
                 case ALPHA_RELATIVE:
-                    updateAlphaRelative(p.getValues());
+                    alpha = updateAlphaRelative(p.getValues());
                     break;
                 case BETA_RELATIVE:
-                    updateBetaRelative(p.getValues());
+                    beta = updateBetaRelative(p.getValues());
                     break;
                 case THETA_RELATIVE:
-                    updateThetaRelative(p.getValues());
+                    theta = updateThetaRelative(p.getValues());
                     break;
-                case DELTA_RELATIVE:
+                /*case DELTA_RELATIVE:
                     updateDeltaRelative(p.getValues());
                     break;
+				*/
                 /*
                 case ALPHA_ABSOLUTE:
                     updateAlphaAbsolute(p.getValues());
@@ -191,6 +198,40 @@ public class MainActivity extends Activity implements OnClickListener {
                 default:
                     break;
             }
+            if(beta_c < 10) {
+                if (beta > old_beta) {
+                    beta_c += 1;
+                }
+            }
+            else{
+                if(beta < old_beta){
+                    beta_c += 1;
+                }
+            }
+            awake = true;
+            if(beta_c > 20){
+                alpha_c = 0;
+                theta_c = 0;
+                beta_c = 0;
+                awake = true;
+            }
+            else{
+                if (alpha >= old_alpha * 0.7){
+                    alpha_c += 1;
+                }
+                if (theta >= old_theta * 0.7){
+                    theta_c += 1;
+                }
+                if(theta_c > 10 && alpha_c > 5){
+                    awake = false;
+                }
+            }
+            if(!awake){
+                // call alarm
+                alarm();
+            }
+            TextView textView = (TextView) findViewById(R.id.textViewValues);
+            textView.setText(alpha_c+"fasdfasdf"+beta_c+"sdfasdfasdfn"+theta_c);
         }
 
         @Override
@@ -200,7 +241,8 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         }
 
-        private void updateAlphaRelative(final ArrayList<Double> data) {
+        private double a = 0.0d;
+        private double updateAlphaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -235,14 +277,16 @@ public class MainActivity extends Activity implements OnClickListener {
                         if (count > 0) {
                             avg = sum / count;
                             if (avg > 0.5) {
-                                alarm();
+                                //alarm();
                             }
                             aSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
+                        a = avg;
                         a5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
+            return a;
         }
 
         public void alarm() {
@@ -250,7 +294,8 @@ public class MainActivity extends Activity implements OnClickListener {
             mp.start();
         }
 
-        private void updateBetaRelative(final ArrayList<Double> data) {
+        private double b = 0.0d;
+        private double updateBetaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -289,13 +334,16 @@ public class MainActivity extends Activity implements OnClickListener {
                             }
                             bSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
+                        b = avg;
                         b5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
+            return b;
         }
 
-        private void updateThetaRelative(final ArrayList<Double> data) {
+        private double t = 0.0d;
+        private double updateThetaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -334,10 +382,12 @@ public class MainActivity extends Activity implements OnClickListener {
                             }
                             tSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
+                        t = avg;
                         t5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
+            return t;
         }
 
         private void updateDeltaRelative(final ArrayList<Double> data) {
