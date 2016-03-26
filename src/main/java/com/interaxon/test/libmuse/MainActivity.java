@@ -277,11 +277,18 @@ public class MainActivity extends Activity implements OnClickListener {
                             count++;
                         }
                         if (count != 0) {
+                            if (avg > 0.2) {
+                                alarm();
+                            }
                             aSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
                     }
                 });
             }
+        }
+
+        public void alarm() {
+            
         }
 
         private void updateBetaRelative(final ArrayList<Double> data) {
