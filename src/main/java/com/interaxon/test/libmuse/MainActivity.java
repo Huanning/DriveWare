@@ -150,9 +150,10 @@ public class MainActivity extends Activity implements OnClickListener {
 
         final WeakReference<Activity> activityRef;
         private MuseFileWriter fileWriter;
-        private double alpha = 0, old_alpha = 0, beta = 0, old_beta = 0, theta = 0, old_theta = 0;
-        private int alpha_c = 0, beta_c = 0, theta_c = 0;
-        boolean awake;
+        private double alpha = 0, old_alpha = 0, beta = 0, old_beta = 0, theta = 0, old_theta = 0, old_alpha1 = 0, old_beta1 = 0, old_theta1 = 0;
+        private int alpha_c = 0, beta_c = 0, theta_c = 0, head_bob = 0, head_delay = 0;
+        private double uD;
+        boolean awake = true;
 
         DataListener(final WeakReference<Activity> activityRef) {
             this.activityRef = activityRef;
@@ -160,10 +161,16 @@ public class MainActivity extends Activity implements OnClickListener {
 
         @Override
         public void receiveMuseDataPacket(MuseDataPacket p) {
+            old_alpha1 = old_alpha;
+            old_beta1 = old_beta;
+            old_theta1 = old_theta;
             old_alpha = alpha;
             old_beta = beta;
             old_theta = theta;
             switch (p.getPacketType()) {
+                case ACCELEROMETER:
+                    uD = updateAccelerometer(p.getValues());
+                    break;
                 case ALPHA_RELATIVE:
                     alpha = updateAlphaRelative(p.getValues());
                     break;
@@ -198,40 +205,33 @@ public class MainActivity extends Activity implements OnClickListener {
                 default:
                     break;
             }
-            if(beta_c < 10) {
-                if (beta > old_beta) {
-                    beta_c += 1;
-                }
+
+            if (beta > old_beta || beta > old_beta1) {
+                beta_c += 1;
             }
-            else{
-                if(beta < old_beta){
-                    beta_c += 1;
-                }
-            }
-            awake = true;
-            if(beta_c > 20){
+            //awake = true;
+            if(beta_c >= 25){
                 alpha_c = 0;
                 theta_c = 0;
                 beta_c = 0;
                 awake = true;
             }
             else{
-                if (alpha >= old_alpha * 0.7){
+                if (alpha > old_alpha || alpha > old_alpha1){
                     alpha_c += 1;
-                }
-                if (theta >= old_theta * 0.7){
+                }  
+                if ((theta > old_theta || theta > old_theta1) && theta != 0){
                     theta_c += 1;
                 }
-                if(theta_c > 10 && alpha_c > 5){
-                    awake = false;
-                }
+
+            }
+            if(theta_c > 10 || alpha_c > 15){
+                awake = false;
             }
             if(!awake){
                 // call alarm
                 alarm();
             }
-            TextView textView = (TextView) findViewById(R.id.textViewValues);
-            textView.setText(alpha_c+"fasdfasdf"+beta_c+"sdfasdfasdfn"+theta_c);
         }
 
         @Override
@@ -239,6 +239,29 @@ public class MainActivity extends Activity implements OnClickListener {
             if (p.getHeadbandOn() && p.getBlink()) {
                 Log.i("Artifacts", "blink");
             }
+        }
+
+        private double upDown = 0.0d;
+        private double updateAccelerometer(final ArrayList<Double> data) {
+            Activity activity = activityRef.get();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView acc_x = (TextView) findViewById(R.id.acc_x);
+                        TextView acc_y = (TextView) findViewById(R.id.acc_y);
+                        TextView acc_z = (TextView) findViewById(R.id.acc_z);
+                        acc_x.setText(String.format(
+                                "%6.2f", data.get(Accelerometer.FORWARD_BACKWARD.ordinal())));
+                        acc_y.setText(String.format(
+                                "%6.2f", data.get(Accelerometer.UP_DOWN.ordinal())));
+                        acc_z.setText(String.format(
+                                "%6.2f", data.get(Accelerometer.LEFT_RIGHT.ordinal())));
+                        upDown = data.get(Accelerometer.UP_DOWN.ordinal());
+                    }
+                });
+            }
+            return upDown;
         }
 
         private double a = 0.0d;
@@ -330,7 +353,7 @@ public class MainActivity extends Activity implements OnClickListener {
                         if (count > 0) {
                             avg = sum / count;
                             if (avg > 0.5) {
-                                alarm();
+
                             }
                             bSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
@@ -378,7 +401,7 @@ public class MainActivity extends Activity implements OnClickListener {
                         if (count > 0) {
                             avg = sum / count;
                             if (avg > 0.5) {
-                                alarm();
+
                             }
                             tSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
@@ -425,7 +448,7 @@ public class MainActivity extends Activity implements OnClickListener {
                         if (count > 0) {
                             avg = sum / count;
                             if (avg > 0.5) {
-                                alarm();
+
                             }
                             dSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
@@ -742,6 +765,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private void configureLibrary() {
         muse.registerConnectionListener(connectionListener);
+        muse.registerDataListener(dataListener, MuseDataPacketType.ACCELEROMETER);
         muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.BETA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.THETA_RELATIVE);
