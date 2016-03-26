@@ -24,4 +24,5 @@
     <string name="alpha_absolute">Alpha Absolute</string>
     <string name="beta_absolute">Beta Absolute</string>
     <string name="theta_absolute">Theta Absolute</string>
+    <string name="average">Average</string>
 </resources>

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -86,6 +87,8 @@ public class MainActivity extends Activity implements OnClickListener {
     private LineGraphSeries<DataPoint> bSeries;
     private LineGraphSeries<DataPoint> tSeries;
     private int lastX = 0;
+
+    private MediaPlayer mp = null;
 
     class ConnectionListener extends MuseConnectionListener {
 
@@ -250,6 +253,7 @@ public class MainActivity extends Activity implements OnClickListener {
                         TextView a2 = (TextView) findViewById(R.id.a2);
                         TextView a3 = (TextView) findViewById(R.id.a3);
                         TextView a4 = (TextView) findViewById(R.id.a4);
+                        TextView a5 = (TextView) findViewById(R.id.a5);
                         a1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
                         a2.setText(String.format(
@@ -260,21 +264,21 @@ public class MainActivity extends Activity implements OnClickListener {
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
                         double avg = 0.0d;
-                        if (data.get(Eeg.TP9.ordinal()) != null) {
-                            avg += data.get(Eeg.TP9.ordinal());
+                        if (!Double.isNaN(data.get(Eeg.TP9.ordinal()))) {
                             count++;
+                            avg += data.get(Eeg.TP9.ordinal()) / count;
                         }
-                        if (data.get(Eeg.TP9.ordinal()) != null) {
-                            avg += data.get(Eeg.FP1.ordinal());
+                        if (!Double.isNaN(data.get(Eeg.FP1.ordinal()))) {
                             count++;
+                            avg += data.get(Eeg.FP1.ordinal()) / count;
                         }
-                        if (data.get(Eeg.TP9.ordinal()) != null) {
-                            avg += data.get(Eeg.FP2.ordinal());
+                        if (!Double.isNaN(data.get(Eeg.FP2.ordinal()))) {
                             count++;
+                            avg += data.get(Eeg.FP2.ordinal()) / count;
                         }
-                        if (data.get(Eeg.TP9.ordinal()) != null) {
-                            avg += data.get(Eeg.TP10.ordinal());
+                        if (!Double.isNaN(data.get(Eeg.TP10.ordinal()))) {
                             count++;
+                            avg += data.get(Eeg.TP10.ordinal()) / count;
                         }
                         if (count != 0) {
                             if (avg > 0.2) {
@@ -288,7 +292,8 @@ public class MainActivity extends Activity implements OnClickListener {
         }
 
         public void alarm() {
-            
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.alarm);
+            mp.start();
         }
 
         private void updateBetaRelative(final ArrayList<Double> data) {
