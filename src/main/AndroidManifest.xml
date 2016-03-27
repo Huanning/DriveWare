@@ -14,14 +14,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/drive"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.interaxon.test.libmuse.MainActivity"
 
             android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:label="DriveWare" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

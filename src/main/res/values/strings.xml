@@ -22,6 +22,7 @@
     <string name="beta_relative">Beta Relative</string>
     <string name="theta_relative">Theta Relative</string>
     <string name="delta_relative">Delta Relative</string>
+    <string name="gamma_relative">Gamma Relative</string>
     <string name="alpha_absolute">Alpha Absolute</string>
     <string name="beta_absolute">Beta Absolute</string>
     <string name="theta_absolute">Theta Absolute</string>

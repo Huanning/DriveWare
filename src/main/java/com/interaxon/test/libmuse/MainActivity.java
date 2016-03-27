@@ -8,6 +8,7 @@ package com.interaxon.test.libmuse;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -84,6 +85,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private LineGraphSeries<DataPoint> bSeries;
     private LineGraphSeries<DataPoint> tSeries;
     private LineGraphSeries<DataPoint> dSeries;
+    private LineGraphSeries<DataPoint> gSeries;
     private int lastX = 0;
 
     private MediaPlayer mp = null;
@@ -150,10 +152,27 @@ public class MainActivity extends Activity implements OnClickListener {
 
         final WeakReference<Activity> activityRef;
         private MuseFileWriter fileWriter;
+
+        /*
         private double alpha = 0, old_alpha = 0, beta = 0, old_beta = 0, theta = 0, old_theta = 0, old_alpha1 = 0, old_beta1 = 0, old_theta1 = 0;
         private int alpha_c = 0, beta_c = 0, theta_c = 0, head_bob = 0, head_delay = 0;
         private double uD;
         boolean awake = true;
+        */
+        private double alpha;
+        private double beta;
+        private double theta;
+        private double delta;
+        private double gamma;
+        //private double uD;
+        private List<Double> alphaWave = new ArrayList<Double>();
+        private List<Double> betaWave = new ArrayList<Double>();
+        private List<Double> thetaWave = new ArrayList<Double>();
+        private List<Double> deltaWave = new ArrayList<Double>();
+        private List<Double> gammaWave = new ArrayList<Double>();
+        private int alphaWarning;
+        private int thetaWarning;
+        private int deltaWarning;
 
         DataListener(final WeakReference<Activity> activityRef) {
             this.activityRef = activityRef;
@@ -161,29 +180,42 @@ public class MainActivity extends Activity implements OnClickListener {
 
         @Override
         public void receiveMuseDataPacket(MuseDataPacket p) {
+            /*
             old_alpha1 = old_alpha;
             old_beta1 = old_beta;
             old_theta1 = old_theta;
             old_alpha = alpha;
             old_beta = beta;
             old_theta = theta;
+            */
             switch (p.getPacketType()) {
+                /*
                 case ACCELEROMETER:
                     uD = updateAccelerometer(p.getValues());
                     break;
+                */
                 case ALPHA_RELATIVE:
                     alpha = updateAlphaRelative(p.getValues());
+                    if (alpha > 0.50) {
+                        alarm();
+                    }
                     break;
                 case BETA_RELATIVE:
                     beta = updateBetaRelative(p.getValues());
+                    //betaWave.add(beta);
                     break;
                 case THETA_RELATIVE:
                     theta = updateThetaRelative(p.getValues());
+                    //thetaWave.add(theta);
                     break;
-                /*case DELTA_RELATIVE:
-                    updateDeltaRelative(p.getValues());
+                case DELTA_RELATIVE:
+                    delta = updateDeltaRelative(p.getValues());
+                    //deltaWave.add(delta);
                     break;
-				*/
+                case GAMMA_RELATIVE:
+                    gamma = updateGammaRelative(p.getValues());
+                    //gammaWave.add(gamma);
+                    break;
                 /*
                 case ALPHA_ABSOLUTE:
                     updateAlphaAbsolute(p.getValues());
@@ -206,6 +238,7 @@ public class MainActivity extends Activity implements OnClickListener {
                     break;
             }
 
+            /*
             if (beta > old_beta || beta > old_beta1) {
                 beta_c += 1;
             }
@@ -219,7 +252,7 @@ public class MainActivity extends Activity implements OnClickListener {
             else{
                 if (alpha > old_alpha || alpha > old_alpha1){
                     alpha_c += 1;
-                }  
+                }
                 if ((theta > old_theta || theta > old_theta1) && theta != 0){
                     theta_c += 1;
                 }
@@ -232,6 +265,7 @@ public class MainActivity extends Activity implements OnClickListener {
                 // call alarm
                 alarm();
             }
+            */
         }
 
         @Override
@@ -241,6 +275,12 @@ public class MainActivity extends Activity implements OnClickListener {
             }
         }
 
+        public void alarm() {
+            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.alarm);
+            mp.start();
+        }
+
+        /*
         private double upDown = 0.0d;
         private double updateAccelerometer(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
@@ -263,6 +303,7 @@ public class MainActivity extends Activity implements OnClickListener {
             }
             return upDown;
         }
+        */
 
         private double a = 0.0d;
         private double updateAlphaRelative(final ArrayList<Double> data) {
@@ -299,9 +340,6 @@ public class MainActivity extends Activity implements OnClickListener {
                         }
                         if (count > 0) {
                             avg = sum / count;
-                            if (avg > 0.5) {
-                                //alarm();
-                            }
                             aSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
                         a = avg;
@@ -310,11 +348,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 });
             }
             return a;
-        }
-
-        public void alarm() {
-            MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.alarm);
-            mp.start();
         }
 
         private double b = 0.0d;
@@ -352,9 +385,6 @@ public class MainActivity extends Activity implements OnClickListener {
                         }
                         if (count > 0) {
                             avg = sum / count;
-                            if (avg > 0.5) {
-
-                            }
                             bSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
                         b = avg;
@@ -400,9 +430,6 @@ public class MainActivity extends Activity implements OnClickListener {
                         }
                         if (count > 0) {
                             avg = sum / count;
-                            if (avg > 0.5) {
-
-                            }
                             tSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
                         t = avg;
@@ -413,7 +440,8 @@ public class MainActivity extends Activity implements OnClickListener {
             return t;
         }
 
-        private void updateDeltaRelative(final ArrayList<Double> data) {
+        private double d = 0.0d;
+        private double updateDeltaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -447,15 +475,59 @@ public class MainActivity extends Activity implements OnClickListener {
                         }
                         if (count > 0) {
                             avg = sum / count;
-                            if (avg > 0.5) {
-
-                            }
                             dSeries.appendData(new DataPoint(lastX++, avg), true, 10);
                         }
+                        d = avg;
                         d5.setText(String.format("%6.2f", avg));
                     }
                 });
             }
+            return d;
+        }
+
+        private double g = 0.0d;
+        private double updateGammaRelative(final ArrayList<Double> data) {
+            Activity activity = activityRef.get();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView g1 = (TextView) findViewById(R.id.g1);
+                        //TextView g2 = (TextView) findViewById(R.id.g2);
+                        //TextView g3 = (TextView) findViewById(R.id.g3);
+                        TextView g4 = (TextView) findViewById(R.id.g4);
+                        TextView g5 = (TextView) findViewById(R.id.g5);
+                        g1.setText(String.format(
+                                "%6.2f", data.get(Eeg.TP9.ordinal())));
+                        /*
+                        g2.setText(String.format(
+                                "%6.2f", data.get(Eeg.FP1.ordinal())));
+                        g3.setText(String.format(
+                                "%6.2f", data.get(Eeg.FP2.ordinal())));
+                        */
+                        g4.setText(String.format(
+                                "%6.2f", data.get(Eeg.TP10.ordinal())));
+                        int count = 0;
+                        double sum = 0.0d;
+                        double avg = 0.0d;
+                        if (!Double.isNaN(data.get(Eeg.TP9.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP9.ordinal());
+                        }
+                        if (!Double.isNaN(data.get(Eeg.TP10.ordinal()))) {
+                            count++;
+                            sum += data.get(Eeg.TP10.ordinal());
+                        }
+                        if (count > 0) {
+                            avg = sum / count;
+                            gSeries.appendData(new DataPoint(lastX++, avg), true, 10);
+                        }
+                        g = avg;
+                        g5.setText(String.format("%6.2f", avg));
+                    }
+                });
+            }
+            return g;
         }
 
         /*
@@ -562,21 +634,22 @@ public class MainActivity extends Activity implements OnClickListener {
         connectButton.setOnClickListener(this);
         Button disconnectButton = (Button) findViewById(R.id.disconnect);
         disconnectButton.setOnClickListener(this);
-        Button pauseButton = (Button) findViewById(R.id.pause);
-        pauseButton.setOnClickListener(this);
 
         GraphView aGraph = (GraphView) findViewById(R.id.graph_alpha_relative);
         GraphView bGraph = (GraphView) findViewById(R.id.graph_beta_relative);
         GraphView tGraph = (GraphView) findViewById(R.id.graph_theta_relative);
         GraphView dGraph = (GraphView) findViewById(R.id.graph_delta_relative);
+        GraphView gGraph = (GraphView) findViewById(R.id.graph_gamma_relative);
         aSeries = new LineGraphSeries<DataPoint>();
         bSeries = new LineGraphSeries<DataPoint>();
         tSeries = new LineGraphSeries<DataPoint>();
         dSeries = new LineGraphSeries<DataPoint>();
+        gSeries = new LineGraphSeries<DataPoint>();
         aGraph.addSeries(aSeries);
         bGraph.addSeries(bSeries);
         tGraph.addSeries(tSeries);
         dGraph.addSeries(dSeries);
+        gGraph.addSeries(gSeries);
 
         /*
         GraphView alphaGraph = (GraphView) findViewById(R.id.graph_alpha_absolute);
@@ -593,24 +666,29 @@ public class MainActivity extends Activity implements OnClickListener {
         // customize graph
         Viewport aViewport = aGraph.getViewport();
         aViewport.setYAxisBoundsManual(true);
-        aViewport.setMinY(-1);
+        aViewport.setMinY(0);
         aViewport.setMaxY(1);
         aViewport.setScrollable(true);
         Viewport bViewport = bGraph.getViewport();
         bViewport.setYAxisBoundsManual(true);
-        bViewport.setMinY(-1);
+        bViewport.setMinY(0);
         bViewport.setMaxY(1);
         bViewport.setScrollable(true);
         Viewport tViewport = tGraph.getViewport();
         tViewport.setYAxisBoundsManual(true);
-        tViewport.setMinY(-1);
+        tViewport.setMinY(0);
         tViewport.setMaxY(1);
         tViewport.setScrollable(true);
         Viewport dViewport = dGraph.getViewport();
         dViewport.setYAxisBoundsManual(true);
-        dViewport.setMinY(-1);
+        dViewport.setMinY(0);
         dViewport.setMaxY(1);
         dViewport.setScrollable(true);
+        Viewport gViewport = gGraph.getViewport();
+        gViewport.setYAxisBoundsManual(true);
+        gViewport.setMinY(0);
+        gViewport.setMaxY(1);
+        gViewport.setScrollable(true);
 
         /*
         Viewport alphaViewport = alphaGraph.getViewport();
@@ -712,12 +790,6 @@ public class MainActivity extends Activity implements OnClickListener {
                 fileWriter.close();
             }
         }
-        else if (v.getId() == R.id.pause) {
-            dataTransmission = !dataTransmission;
-            if (muse != null) {
-                muse.enableDataTransmission(dataTransmission);
-            }
-        }
     }
 
     /*
@@ -765,11 +837,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
     private void configureLibrary() {
         muse.registerConnectionListener(connectionListener);
-        muse.registerDataListener(dataListener, MuseDataPacketType.ACCELEROMETER);
+        //muse.registerDataListener(dataListener, MuseDataPacketType.ACCELEROMETER);
         muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.BETA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.THETA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.DELTA_RELATIVE);
+        muse.registerDataListener(dataListener, MuseDataPacketType.GAMMA_RELATIVE);
         /*
         muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_ABSOLUTE);
         muse.registerDataListener(dataListener, MuseDataPacketType.BETA_ABSOLUTE);

@@ -89,6 +89,7 @@
 	</LinearLayout>
     -->
 
+    <!--
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -122,6 +123,7 @@
 			android:textSize="16sp"
 			android:text="@string/init_val" />
 	</LinearLayout>
+    -->
 
 	<TextView
 		android:layout_width="match_parent"
@@ -387,6 +389,72 @@
             android:text="@string/init_val" />
     </LinearLayout>
 
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:textSize="16sp"
+		android:text="@string/gamma_relative" />
+	<com.jjoe64.graphview.GraphView
+		android:id="@+id/graph_gamma_relative"
+		android:layout_width="match_parent"
+		android:layout_height="300dp" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:orientation="horizontal" >
+		<TextView
+			android:id="@+id/g1"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:textSize="16sp"
+			android:text="@string/init_val" />
+		<!--
+        <TextView
+            android:id="@+id/g2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="@string/init_val" />
+        <TextView
+            android:id="@+id/g3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:text="@string/init_val" />
+        -->
+		<TextView
+			android:id="@+id/g4"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:textSize="16sp"
+			android:text="@string/init_val" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:orientation="horizontal" >
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:textSize="16sp"
+			android:text="@string/average" />
+		<TextView
+			android:id="@+id/g5"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_weight="1"
+			android:textSize="16sp"
+			android:text="@string/init_val" />
+	</LinearLayout>
+
     <!--
     <TextView
         android:layout_width="match_parent"
@@ -541,12 +609,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="45dp"
 		android:orientation="horizontal" >
-		<Button
-			android:id="@+id/pause"
-			android:layout_width="150dp"
-			android:layout_height="40dp"
-			android:text="@string/pause" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
