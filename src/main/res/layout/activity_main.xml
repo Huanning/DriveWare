@@ -147,7 +147,6 @@
 			android:layout_weight="1"
 			android:textSize="16sp"
 			android:text="@string/init_val" />
-        <!--
 		<TextView
 			android:id="@+id/a2"
 			android:layout_width="match_parent"
@@ -162,7 +161,6 @@
 			android:layout_weight="1"
 			android:textSize="16sp"
 			android:text="@string/init_val" />
-	    -->
 		<TextView
 			android:id="@+id/a4"
 			android:layout_width="match_parent"
@@ -191,6 +189,7 @@
             android:text="@string/init_val" />
     </LinearLayout>
 
+	<!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -213,7 +212,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        <!--
         <TextView
             android:id="@+id/b2"
             android:layout_width="match_parent"
@@ -228,7 +226,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        -->
         <TextView
             android:id="@+id/b4"
             android:layout_width="match_parent"
@@ -279,7 +276,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        <!--
         <TextView
             android:id="@+id/t2"
             android:layout_width="match_parent"
@@ -294,7 +290,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        -->
         <TextView
             android:id="@+id/t4"
             android:layout_width="match_parent"
@@ -345,7 +340,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        <!--
         <TextView
             android:id="@+id/d2"
             android:layout_width="match_parent"
@@ -360,7 +354,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        -->
         <TextView
             android:id="@+id/d4"
             android:layout_width="match_parent"
@@ -411,7 +404,6 @@
 			android:layout_weight="1"
 			android:textSize="16sp"
 			android:text="@string/init_val" />
-		<!--
         <TextView
             android:id="@+id/g2"
             android:layout_width="match_parent"
@@ -426,7 +418,6 @@
             android:layout_weight="1"
             android:textSize="16sp"
             android:text="@string/init_val" />
-        -->
 		<TextView
 			android:id="@+id/g4"
 			android:layout_width="match_parent"
@@ -455,7 +446,6 @@
 			android:text="@string/init_val" />
 	</LinearLayout>
 
-    <!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

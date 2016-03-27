@@ -8,7 +8,6 @@ package com.interaxon.test.libmuse;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -25,7 +24,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.interaxon.libmuse.Accelerometer;
 import com.interaxon.libmuse.AnnotationData;
 import com.interaxon.libmuse.ConnectionState;
 import com.interaxon.libmuse.Eeg;
@@ -196,10 +194,11 @@ public class MainActivity extends Activity implements OnClickListener {
                 */
                 case ALPHA_RELATIVE:
                     alpha = updateAlphaRelative(p.getValues());
-                    if (alpha > 0.50) {
+                    if (alpha > 0.4) {
                         alarm();
                     }
                     break;
+                /*
                 case BETA_RELATIVE:
                     beta = updateBetaRelative(p.getValues());
                     //betaWave.add(beta);
@@ -216,7 +215,6 @@ public class MainActivity extends Activity implements OnClickListener {
                     gamma = updateGammaRelative(p.getValues());
                     //gammaWave.add(gamma);
                     break;
-                /*
                 case ALPHA_ABSOLUTE:
                     updateAlphaAbsolute(p.getValues());
                     break;
@@ -313,18 +311,16 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView a1 = (TextView) findViewById(R.id.a1);
-                        //TextView a2 = (TextView) findViewById(R.id.a2);
-                        //TextView a3 = (TextView) findViewById(R.id.a3);
+                        TextView a2 = (TextView) findViewById(R.id.a2);
+                        TextView a3 = (TextView) findViewById(R.id.a3);
                         TextView a4 = (TextView) findViewById(R.id.a4);
                         TextView a5 = (TextView) findViewById(R.id.a5);
                         a1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
-                        /*
                         a2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         a3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
-                        */
                         a4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
@@ -350,6 +346,7 @@ public class MainActivity extends Activity implements OnClickListener {
             return a;
         }
 
+        /*
         private double b = 0.0d;
         private double updateBetaRelative(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
@@ -358,18 +355,16 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView b1 = (TextView) findViewById(R.id.b1);
-                        //TextView b2 = (TextView) findViewById(R.id.b2);
-                        //TextView b3 = (TextView) findViewById(R.id.b3);
+                        TextView b2 = (TextView) findViewById(R.id.b2);
+                        TextView b3 = (TextView) findViewById(R.id.b3);
                         TextView b4 = (TextView) findViewById(R.id.b4);
                         TextView b5 = (TextView) findViewById(R.id.b5);
                         b1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
-                        /*
                         b2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         b3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
-                        */
                         b4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
@@ -403,18 +398,16 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView t1 = (TextView) findViewById(R.id.t1);
-                        //TextView t2 = (TextView) findViewById(R.id.t2);
-                        //TextView t3 = (TextView) findViewById(R.id.t3);
+                        TextView t2 = (TextView) findViewById(R.id.t2);
+                        TextView t3 = (TextView) findViewById(R.id.t3);
                         TextView t4 = (TextView) findViewById(R.id.t4);
                         TextView t5 = (TextView) findViewById(R.id.t5);
                         t1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
-                        /*
                         t2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         t3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
-                        */
                         t4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
@@ -448,18 +441,16 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView d1 = (TextView) findViewById(R.id.d1);
-                        //TextView d2 = (TextView) findViewById(R.id.d2);
-                        //TextView d3 = (TextView) findViewById(R.id.d3);
+                        TextView d2 = (TextView) findViewById(R.id.d2);
+                        TextView d3 = (TextView) findViewById(R.id.d3);
                         TextView d4 = (TextView) findViewById(R.id.d4);
                         TextView d5 = (TextView) findViewById(R.id.d5);
                         d1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
-                        /*
                         d2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         d3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
-                        */
                         d4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
@@ -493,18 +484,16 @@ public class MainActivity extends Activity implements OnClickListener {
                     @Override
                     public void run() {
                         TextView g1 = (TextView) findViewById(R.id.g1);
-                        //TextView g2 = (TextView) findViewById(R.id.g2);
-                        //TextView g3 = (TextView) findViewById(R.id.g3);
+                        TextView g2 = (TextView) findViewById(R.id.g2);
+                        TextView g3 = (TextView) findViewById(R.id.g3);
                         TextView g4 = (TextView) findViewById(R.id.g4);
                         TextView g5 = (TextView) findViewById(R.id.g5);
                         g1.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP9.ordinal())));
-                        /*
                         g2.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP1.ordinal())));
                         g3.setText(String.format(
                                 "%6.2f", data.get(Eeg.FP2.ordinal())));
-                        */
                         g4.setText(String.format(
                                 "%6.2f", data.get(Eeg.TP10.ordinal())));
                         int count = 0;
@@ -530,7 +519,6 @@ public class MainActivity extends Activity implements OnClickListener {
             return g;
         }
 
-        /*
         private void updateAlphaAbsolute(final ArrayList<Double> data) {
             Activity activity = activityRef.get();
             if (activity != null) {
@@ -636,20 +624,20 @@ public class MainActivity extends Activity implements OnClickListener {
         disconnectButton.setOnClickListener(this);
 
         GraphView aGraph = (GraphView) findViewById(R.id.graph_alpha_relative);
-        GraphView bGraph = (GraphView) findViewById(R.id.graph_beta_relative);
-        GraphView tGraph = (GraphView) findViewById(R.id.graph_theta_relative);
-        GraphView dGraph = (GraphView) findViewById(R.id.graph_delta_relative);
-        GraphView gGraph = (GraphView) findViewById(R.id.graph_gamma_relative);
+        //GraphView bGraph = (GraphView) findViewById(R.id.graph_beta_relative);
+        //GraphView tGraph = (GraphView) findViewById(R.id.graph_theta_relative);
+        //GraphView dGraph = (GraphView) findViewById(R.id.graph_delta_relative);
+        //GraphView gGraph = (GraphView) findViewById(R.id.graph_gamma_relative);
         aSeries = new LineGraphSeries<DataPoint>();
-        bSeries = new LineGraphSeries<DataPoint>();
-        tSeries = new LineGraphSeries<DataPoint>();
-        dSeries = new LineGraphSeries<DataPoint>();
-        gSeries = new LineGraphSeries<DataPoint>();
+        //bSeries = new LineGraphSeries<DataPoint>();
+        //tSeries = new LineGraphSeries<DataPoint>();
+        //dSeries = new LineGraphSeries<DataPoint>();
+        //gSeries = new LineGraphSeries<DataPoint>();
         aGraph.addSeries(aSeries);
-        bGraph.addSeries(bSeries);
-        tGraph.addSeries(tSeries);
-        dGraph.addSeries(dSeries);
-        gGraph.addSeries(gSeries);
+        //bGraph.addSeries(bSeries);
+        //tGraph.addSeries(tSeries);
+        //dGraph.addSeries(dSeries);
+        //gGraph.addSeries(gSeries);
 
         /*
         GraphView alphaGraph = (GraphView) findViewById(R.id.graph_alpha_absolute);
@@ -669,6 +657,7 @@ public class MainActivity extends Activity implements OnClickListener {
         aViewport.setMinY(0);
         aViewport.setMaxY(1);
         aViewport.setScrollable(true);
+        /*
         Viewport bViewport = bGraph.getViewport();
         bViewport.setYAxisBoundsManual(true);
         bViewport.setMinY(0);
@@ -690,7 +679,6 @@ public class MainActivity extends Activity implements OnClickListener {
         gViewport.setMaxY(1);
         gViewport.setScrollable(true);
 
-        /*
         Viewport alphaViewport = alphaGraph.getViewport();
         alphaViewport.setYAxisBoundsManual(true);
         alphaViewport.setMinY(-1);
@@ -839,11 +827,12 @@ public class MainActivity extends Activity implements OnClickListener {
         muse.registerConnectionListener(connectionListener);
         //muse.registerDataListener(dataListener, MuseDataPacketType.ACCELEROMETER);
         muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_RELATIVE);
+        /*
         muse.registerDataListener(dataListener, MuseDataPacketType.BETA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.THETA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.DELTA_RELATIVE);
         muse.registerDataListener(dataListener, MuseDataPacketType.GAMMA_RELATIVE);
-        /*
+
         muse.registerDataListener(dataListener, MuseDataPacketType.ALPHA_ABSOLUTE);
         muse.registerDataListener(dataListener, MuseDataPacketType.BETA_ABSOLUTE);
         muse.registerDataListener(dataListener, MuseDataPacketType.THETA_ABSOLUTE);
