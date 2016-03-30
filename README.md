@@ -1,11 +1,11 @@
-# WakeupDriver
+# WakeupDriver - DriveWare
 
-App that alerts drivers if sleeping  
+App that alerts drivers if they fall asleep  
 
-1. Turn on MUSE band and Connect the device with an Android mobile phone via Bluetooth.
+1. Turn on the MUSE headband and connect the device to an Android phone via Bluetooth.
 
 2. Open up the application and press connect. 
 
-3. Wait until the devices sync with your brain and produce some graphs
+3. Wait until the devices syncs with your brain and produces some graphs
 
 
