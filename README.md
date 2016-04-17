@@ -1,6 +1,6 @@
 # WakeupDriver - DriveWare
 
-App that alerts drivers when they fall asleep  
+App that alerts drivers when they start falling asleep  
 
 1. Turn on the MUSE headband and connect the device to an Android phone via Bluetooth.
 
@@ -9,13 +9,13 @@ App that alerts drivers when they fall asleep
 3. Wait until the devices syncs with your brain and produces some graphs
 
 
-How the app detects sleeping pattern
+How it works
 
 1. When a person has abnormal blink of eyes, which shows sign of falling a sleep, 
 
-relative alpha signal from brain suddenly spikes. The app detect this and alarm the 
+relative alpha signal from brain suddenly spikes. 
 
-user by playing a loud sound
+2. The app detect this and alarm the user by playing a loud sound
 
 ![DriveWare](/screen1.png?raw=true)
 
