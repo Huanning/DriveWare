@@ -9,7 +9,7 @@ App that alerts drivers when they start falling asleep
 3. Wait until the devices syncs with your brain and produces some graphs
 
 
-How it works
+How the app works
 
 1. When a person has abnormal blink of eyes, which shows sign of falling a sleep, 
 
